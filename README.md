@@ -16,3 +16,4 @@ Time used by Python: less than 1 sec
 Time used by R: about 15 sec
 
 
+Took about 3.5hours to finish the whole test
