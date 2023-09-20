@@ -1,3 +1,6 @@
+#install.packages("dplyr")
+library(dplyr)
+
 # read .rds document
 setwd('E:/CSYE6200/BioInfoTest/test/')
 df_R <- readRDS("exgr_test.rds")
@@ -26,3 +29,19 @@ print(paste("Median of width is:", median_width))
 
 
 # Task 4: Calculate the length of intron
+start_time <- Sys.time()
+
+df_R <- df_R %>%
+  group_by(transcript_id) %>%
+  mutate(intron_length = ifelse(strand == "+", start - lag(end), start - lead(end)))
+#df_R <- df_R %>%
+#  group_by(transcript_id) %>%
+#  mutate(intron_length = ifelse(strand == "+" & row_number() == 1, 0, intron_length),
+#         intron_length = ifelse(strand == "-" & row_number() == n(), 0, intron_length))
+
+end_time <- Sys.time()
+ 
+time_taken <- end_time - start_time
+print(time_taken)
+
+df_R
