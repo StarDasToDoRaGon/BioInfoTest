@@ -77,4 +77,3 @@ df_R <- df_R %>%
          u2 = ifelse(strand == '-' & lead(intron_length) > 0 & lead(intron_length) < 200, as.numeric(lead(l1) - lead(intron_length) / 2.0), u2)) %>%
   ungroup()
 
-df_R %>% filter(transcript_id == 10794)
