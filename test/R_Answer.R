@@ -35,8 +35,8 @@ start_time <- Sys.time()
 df_R <- df_R %>%
   group_by(transcript_id) %>%       # We don't know if the data set was grouped by transcript_id, so do it before operation
   mutate(intron_length = ifelse(strand == "+",      
-                                start - lag(end),          # if strand is positive: intron_length = nth start - (n-1)th end
-                                start - lead(end)))%>%     # if strand is negative: intron_length = nth start - (n+1)th end
+                                start - lag(end) - 1,          # if strand is positive: intron_length = nth start - (n-1)th end
+                                start - lead(end) - 1))%>%     # if strand is negative: intron_length = nth start - (n+1)th end
   # since group by transcript_id, the first element of positive and last element of negative are none. Those elements are just the target that should be changed to 0 
   mutate(intron_length = ifelse(is.na(intron_length), 0, intron_length))
 
