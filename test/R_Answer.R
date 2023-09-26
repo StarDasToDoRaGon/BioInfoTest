@@ -45,6 +45,7 @@ time_taken <- end_time - start_time      # print the time used for task 4
 print(time_taken)
 
 
+# Extra Points:
 df_R <- df_R %>%
   mutate(l1 = start - 100,        # init 
          l2 = start + 100,
@@ -56,24 +57,19 @@ df_R <- df_R %>%
          last_row = row_number() == n()) %>%
   ungroup() %>%
   # update the beginning and end coordinate
-  mutate(l1 = ifelse(first_row & strand == '+', 0, l1),
-         u2 = ifelse(last_row & strand == '+', 0, u2),
-         u2 = ifelse(first_row & strand == '-', 0, u2),
-         l1 = ifelse(last_row & strand == '-', 0, l1),
-         l2 = ifelse(width < 200, (start + end) / 2.0, l2),
+  mutate(l2 = ifelse(width < 200, (start + end) / 2.0, l2),
          u1 = ifelse(width < 200, (start + end) / 2.0, u1))
 
 # For positive strand intron_length adjustment
 df_R <- df_R %>%
-  group_by(transcript_id, strand) %>%
   mutate(l1 = ifelse(strand == '+' & intron_length > 0 & intron_length < 200, as.numeric(l1 - intron_length / 2.0), l1),
-         u2 = ifelse(strand == '+' & lag(intron_length) > 0 & lag(intron_length) < 200, as.numeric(lag(l1) - lag(intron_length) / 2.0), u2)) %>%
-  ungroup()
+         u2 = ifelse(strand == '+' & rank > 1 & lag(intron_length) > 0 & lag(intron_length) < 200, lag(l1) - lag(intron_length) / 2.0, u2))
 
 # For negative strand intron_length adjustment
 df_R <- df_R %>%
-  group_by(transcript_id, strand) %>%
   mutate(l1 = ifelse(strand == '-' & intron_length > 0 & intron_length < 200, as.numeric(l1 - intron_length / 2.0), l1),
-         u2 = ifelse(strand == '-' & lead(intron_length) > 0 & lead(intron_length) < 200, as.numeric(lead(l1) - lead(intron_length) / 2.0), u2)) %>%
-  ungroup()
-
+         u2 = ifelse(strand == '-' & lead(intron_length) > 0 & lead(intron_length) < 200, as.numeric(lead(l1) - lead(intron_length) / 2.0), u2),
+        l1 = ifelse(first_row & strand == '+', 0, l1),
+        u2 = ifelse(last_row & strand == '+', 0, u2),
+        u2 = ifelse(first_row & strand == '-', 0, u2),
+        l1 = ifelse(last_row & strand == '-', 0, l1))
